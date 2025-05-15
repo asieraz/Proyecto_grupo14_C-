@@ -1,0 +1,6 @@
+database: ../../database/adate.db
+fichero_departamentos: ../../database/datosIniciales/departamentos.csv
+fichero_empleados: ../../database/datosIniciales/empleados.csv
+fichero_productos: ../../database/datosIniciales/productos.csv
+fichero_proveedores: ../../database/datosIniciales/proveedores.csv
+fichero_secciones: ../../database/datosIniciales/secciones.csv
