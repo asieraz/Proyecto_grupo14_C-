@@ -1,7 +1,7 @@
 
 
-#ifndef SRC_PRODUCTO_H_
-#define SRC_PRODUCTO_H_
+#ifndef SRC_HEADERS_OBJETOS_H_
+#define SRC_HEADERS_OBJETOS_H_
 
 class Producto {
 protected:
@@ -23,7 +23,6 @@ public:
 	float getPrecio();
 	int getCodSeccion();
 	int getCodProveedor();
-	const char *getTipo();
 	int getNumDisponibles();
 
 	void setIdProd(int idProd);
@@ -31,7 +30,6 @@ public:
 	void setPrecio(float precio);
 	void setCodSeccion(int codSeccion);
 	void setCodProveedor(int codProveedor);
-	void setTipo(const char * tipo);
 	void setNumDisponibles(int numDisponibles);
 };
 
@@ -124,4 +122,4 @@ public:
 };
 
 
-#endif /* SRC_PRODUCTO_H_ */
+#endif /* SRC_HEADERS_OBJETOS_H_ */

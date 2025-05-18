@@ -55,6 +55,7 @@ void crearTablasInit(sqlite3 *db) {
 			"precio REAL, "
 			"id_Proveedor INTEGER, "
 			"cod_Seccion INTEGER, "
+			"stock INTEGER, "
 			"FOREIGN KEY(id_Proveedor) REFERENCES proveedor(id_Proveedor) ON DELETE CASCADE, "
 			"FOREIGN KEY(cod_Seccion) REFERENCES seccion(cod_seccion) ON DELETE CASCADE"
 			");";
@@ -300,13 +301,14 @@ void cargarProductosInit(sqlite3 *db, char* archivos_csv) {
         float precio;
         int id_Proveedor;
         int cod_Seccion;
+        int stock;
 
         // Quitar salto de línea
         linea[strcspn(linea, "\n")] = 0;
 
         // Parsear los valores (ajustado para la estructura de productos)
-        if (sscanf(linea, "%d,%49[^,],%f,%d,%d",
-                   &id_Producto, nombre, &precio, &id_Proveedor, &cod_Seccion) != 5) {
+        if (sscanf(linea, "%d,%49[^,],%f,%d,%d,%d",
+                   &id_Producto, nombre, &precio, &id_Proveedor, &cod_Seccion, &stock) != 6) {
             fprintf(stderr, "Error al parsear línea: %s\n", linea);
             continue;
         }
@@ -314,9 +316,9 @@ void cargarProductosInit(sqlite3 *db, char* archivos_csv) {
         // Crear consulta SQL para productos
         char consulta[512];
         snprintf(consulta, sizeof(consulta),
-                 "INSERT OR IGNORE INTO producto (id_Producto, nombre, precio, id_Proveedor, cod_Seccion) "
-                 "VALUES (%d, '%s', %.2f, %d, %d);",
-                 id_Producto, nombre, precio, id_Proveedor, cod_Seccion);
+                 "INSERT OR IGNORE INTO producto (id_Producto, nombre, precio, id_Proveedor, cod_Seccion, stock) "
+                 "VALUES (%d, '%s', %.2f, %d, %d, %d);",
+                 id_Producto, nombre, precio, id_Proveedor, cod_Seccion, stock);
 
         // Ejecutar consulta
         if (sqlite3_exec(db, consulta, 0, 0, &error_msg) != SQLITE_OK) {

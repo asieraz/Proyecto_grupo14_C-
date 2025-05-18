@@ -33,7 +33,7 @@ void mostrarProductos(sqlite3 *db) {
 
 	sqlite3_stmt *stmt;
 
-	char sql[] = "select id_Producto, nombre, precio, id_Proveedor, cod_Seccion from producto";
+	char sql[] = "select id_Producto, nombre, precio, id_Proveedor, cod_Seccion, stock from producto";
 
 	int result = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
 	if (result != SQLITE_OK) {
@@ -48,9 +48,13 @@ void mostrarProductos(sqlite3 *db) {
 		double precio = sqlite3_column_double(stmt, 2);
 	    int codProveedor = sqlite3_column_int(stmt, 3);
 	    int codSeccion = sqlite3_column_int(stmt, 4);
+	    int stock = sqlite3_column_int(stmt, 5);
 
 	    if(!idProd == 0) {
-	    	printf("Producto: %d, Nombre: %s, Precio: %.2f, Proveedor: %d, Sección: %d\n", idProd, nombreProd, precio, codProveedor, codSeccion);
+	    	printf("Producto: %d, Nombre: %s, Precio: %.2f, Proveedor: %d, Sección: %d\nStock: %d\n", idProd, nombreProd, precio, codProveedor, codSeccion, stock);
+	    	if (stock == 0) {
+	    		printf("PRODUCTO SIN STOCK\n");
+	    	}
 	    }
 	}
 
