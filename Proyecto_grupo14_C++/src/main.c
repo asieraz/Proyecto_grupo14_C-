@@ -7,11 +7,12 @@
 #include "../includes/interfaz.h"
 #include "../includes/estructuras.h"
 #include "../includes/config.h"
+#include "../includes/server.h"
 #include <stdlib.h>
 
 int main (void){
 	Config config;
-	cargarConfig("config/config.txt", &config);
+	cargarConfig("Debug/config/config.txt", &config);
 
 	sqlite3 * db;
 	int abrir = sqlite3_open(config.database, &db);
@@ -34,6 +35,7 @@ int main (void){
 	        printf("2. Gestión de Empleados\n");
 	        printf("3. Gestión de la BBDD\n");
 	        printf("4. Introducir datos.\n");
+	        printf("5. Server\n");
 	        printf("q. Salir del programa\n");
 	        printf("Seleccione una opción: ");
 	        fflush(stdout);
@@ -51,6 +53,9 @@ int main (void){
 	                break;
 	            case '4':
 	            	introducirDatosDesdeCSV(db, config);
+	            	break;
+	            case '5':
+	            	run_server();
 	            	break;
 	            case 'q':
 	                printf("Saliendo del programa...\n");
