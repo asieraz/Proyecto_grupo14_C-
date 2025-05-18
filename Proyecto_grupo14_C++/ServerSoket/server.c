@@ -89,24 +89,24 @@ void run_server() {
     fflush(stdout);
 
     do {
-        memset(recvBuff, 0, sizeof(recvBuff));
-        recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
-        printf("Command received: %s \n", recvBuff);
+        memset(recvBuff, 0, sizeof(recvBuff)); //vacia el recvBuff para asegurarse de que este vacio
+        recv(comm_socket, recvBuff, sizeof(recvBuff), 0); //recibe el mensaje (normalmente el comando que quiere que el server ejecute) del cliente y lo guarda en recvBuff
+        printf("Command received: %s \n", recvBuff); //muestra el mensaje que ha mandado el cliente
         fflush(stdout);
 
-        if (strcmp(recvBuff, "SUMAR") == 0) {
+        if (strcmp(recvBuff, "SUMAR") == 0) { //si el recvBuff == "SUMAR"
             int suma = 0;
             do {
-                memset(recvBuff, 0, sizeof(recvBuff));
-                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
-                if (strcmp(recvBuff, "SUMAR-END") != 0) {
-                    int n = atoi(recvBuff);
+                memset(recvBuff, 0, sizeof(recvBuff)); //vacia recvBuff
+                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);//el cliente va a mandar numeros hasta que mande un "SUMAR-END" que sera la señal de que ya ha terminado
+                if (strcmp(recvBuff, "SUMAR-END") != 0) {//si el recvBuff no es igual a "SUMAR-END" suma el numero recivido
+                    int n = atoi(recvBuff); //combierte el numero recivido a un entero
                     suma += n;
                 }
-            } while (strcmp(recvBuff, "SUMAR-END") != 0);
-            sprintf(sendBuff, "%d", suma);
-            send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-            printf("Response sent: %s \n", sendBuff);
+            } while (strcmp(recvBuff, "SUMAR-END") != 0); //repite el proceso hasta que recvBuff = "SUMAR-END"
+            sprintf(sendBuff, "%d", suma); //transforma el resultado en un string y lo guarda en sendBuff
+            send(comm_socket, sendBuff, sizeof(sendBuff), 0); //envia el resultado al cliente
+            printf("Response sent: %s \n", sendBuff); //printea la respuesta que se le ha dado al cliente
             fflush(stdout);
         } else if (strcmp(recvBuff, "RAIZ") == 0) {
             memset(recvBuff, 0, sizeof(recvBuff));
