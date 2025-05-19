@@ -1,6 +1,7 @@
-#include "Producto.h"
 #include <string.h>
 #include <iostream>
+
+#include "../../includes/objetos/headers_objetos.h"
 
 Departamento::Departamento() {
 	this->idDepartamento = 0;

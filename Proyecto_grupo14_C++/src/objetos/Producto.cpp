@@ -1,6 +1,7 @@
-#include "Producto.h"
 #include <string.h>
 #include <iostream>
+
+#include "../../includes/objetos/headers_objetos.h"
 
 Producto::Producto() {
 	this->idProd = 0;
@@ -61,9 +62,6 @@ int Producto::getCodProveedor() {
 	return this->codProveedor;
 }
 
-const char *Producto::getTipo() {
-	return this->tipo;
-}
 
 int Producto::getNumDisponibles() {
 	return this->numDisponibles;
@@ -91,14 +89,6 @@ void Producto::setCodSeccion(int codSeccion) {
 
 void Producto::setCodProveedor(int codProveedor) {
 	this->codProveedor = codProveedor;
-}
-
-void Producto::setTipo(const char *tipo) {
-	if (this->tipo != NULL) {
-		delete[] this->tipo;
-	}
-	this->tipo = new char[strlen(tipo) + 1];
-	strcpy(this->tipo, tipo);
 }
 
 void Producto::setNumDisponibles(int numDisponibles) {
