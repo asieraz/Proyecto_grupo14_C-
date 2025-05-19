@@ -52,6 +52,7 @@ void mostrarProductos(sqlite3 *db) {
 	    if(!idProd == 0) {
 	    	printf("Producto: %d, Nombre: %s, Precio: %.2f, Proveedor: %d, Sección: %d\n", idProd, nombreProd, precio, codProveedor, codSeccion);
 	    }
+
 	}
 
 

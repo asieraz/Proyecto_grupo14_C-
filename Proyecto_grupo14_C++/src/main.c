@@ -55,7 +55,7 @@ int main (void){
 	            	introducirDatosDesdeCSV(db, config);
 	            	break;
 	            case '5':
-	            	run_server();
+	            	run_server(db);
 	            	break;
 	            case 'q':
 	                printf("Saliendo del programa...\n");

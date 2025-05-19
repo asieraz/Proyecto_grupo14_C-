@@ -20,4 +20,4 @@
 
 #endif /* INCLUDES_SERVER_H_ */
 
-void run_server();
+void run_server(sqlite3 *db);

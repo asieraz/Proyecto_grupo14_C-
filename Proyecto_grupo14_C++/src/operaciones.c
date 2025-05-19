@@ -4,6 +4,7 @@
 #include "../includes/anadirDatosDB.h"
 #include <stdlib.h>
 #include <string.h>
+#include <winsock2.h>
 
 
 
@@ -85,6 +86,7 @@ void mostrarProductosEstante(Producto **productosEstante, int *seccionesEstante,
 		}
 	}
 }
+
 
 void imprimirProducto(Producto p) {
     printf("ID: %d, Nombre: %s, Precio: %.2f, Sección: %d, Proveedor: %d\n",

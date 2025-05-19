@@ -23,7 +23,7 @@
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 6000
 
-void run_server() {
+void run_server(sqlite3 *db) {
     WSADATA wsaData;
     SOCKET conn_socket;
     SOCKET comm_socket;
@@ -108,19 +108,40 @@ void run_server() {
             send(comm_socket, sendBuff, sizeof(sendBuff), 0); //envia el resultado al cliente
             printf("Response sent: %s \n", sendBuff); //printea la respuesta que se le ha dado al cliente
             fflush(stdout);
-        } else if (strcmp(recvBuff, "RAIZ") == 0) {
-            memset(recvBuff, 0, sizeof(recvBuff));
-            recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
-            int n = atoi(recvBuff);
-            float raiz = sqrt(n);
 
+        } else if (strcmp(recvBuff, "MOSTRAR") == 0) {
             memset(recvBuff, 0, sizeof(recvBuff));
-            recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
-            // "RAIZ-END" is just for confirmation
+            //------------------------------------
+        	sqlite3_stmt *stmt;
 
-            sprintf(sendBuff, "%f", raiz);
-            send(comm_socket, sendBuff, sizeof(sendBuff), 0);
-            printf("Response sent: %s \n", sendBuff);
+        	char sql[] = "select id_Producto, nombre, precio, id_Proveedor, cod_Seccion from producto";
+
+        	int result = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+        	if (result != SQLITE_OK) {
+        		printf("Error preparando la consulta SELECT\n");
+        	    printf("%s\n", sqlite3_errmsg(db));
+        	    return;
+        	}
+
+        	while (sqlite3_step(stmt) == SQLITE_ROW) {
+        		int idProd = sqlite3_column_int(stmt, 0);
+        		const unsigned char *nombreProd = sqlite3_column_text(stmt, 1);
+        		double precio = sqlite3_column_double(stmt, 2);
+        	    int codProveedor = sqlite3_column_int(stmt, 3);
+        	    int codSeccion = sqlite3_column_int(stmt, 4);
+
+        	   if(!idProd == 0) {
+        		   sprintf(sendBuff, "Producto: %d, Nombre: %s, Precio: %.2f, Proveedor: %d, Seccion: %d\n", idProd, nombreProd, precio, codProveedor, codSeccion);
+        		   send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	    }
+
+        	}
+        	strcpy(sendBuff, "MOSTRAR-END");// la señal de que ya has terminado de enviar datos
+        	send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	sqlite3_finalize(stmt);
+        	//------------------------------------
+
+            printf("Productos mostrados \n");
             fflush(stdout);
         } else if (strcmp(recvBuff, "IP") == 0) {
             memset(recvBuff, 0, sizeof(recvBuff));
