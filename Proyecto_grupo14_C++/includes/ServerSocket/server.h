@@ -9,7 +9,6 @@
 #define INCLUDES_SERVER_H_
 
 
-#include "../includes/operaciones.h"
 #include "../includes/finalInitDatabase.h"
 #include "../includes/anadirDatosDB.h"
 #include "../includes/GestorDB.h"
@@ -18,6 +17,8 @@
 #include "../includes/estructuras.h"
 #include "../includes/config.h"
 
+void run_server(sqlite3 *db);
+
 #endif /* INCLUDES_SERVER_H_ */
 
-void run_server(sqlite3 *db);
+

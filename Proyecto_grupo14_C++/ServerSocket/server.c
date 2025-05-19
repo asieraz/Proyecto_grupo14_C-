@@ -5,7 +5,7 @@
  *      Author: a.azcorra
  */
 
-#include "../includes/operaciones.h"
+
 #include "../includes/finalInitDatabase.h"
 #include "../includes/anadirDatosDB.h"
 #include "../includes/GestorDB.h"
@@ -14,7 +14,7 @@
 #include "../includes/estructuras.h"
 #include "../includes/config.h"
 #include "../libs/sqlite3.h"
-#include "../includes/server.h"
+#include "../includes/ServerSocket/server.h"
 #include <stdio.h>
 #include <winsock2.h>
 #include <math.h>
