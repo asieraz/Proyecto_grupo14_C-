@@ -1,9 +1,10 @@
 /*
- * server.c
+ * server.cpp
  *
- *  Created on: 17 may 2025
+ *  Created on: 20 may 2025
  *      Author: a.azcorra
  */
+
 
 #include "../../includes/operaciones.h"
 #include "../../includes/finalInitDatabase.h"
