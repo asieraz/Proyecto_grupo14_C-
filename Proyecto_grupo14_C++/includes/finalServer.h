@@ -9,14 +9,14 @@
 
 #ifndef INCLUDES_SERVERSOCKET_FINALSERVER_H_
 #define INCLUDES_SERVERSOCKET_FINALSERVER_H_
-
+/*
 #define WIN32_LEAN_AND_MEAN
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <string.h>
 
-#include "../../libs/sqlite3.h"
+#include "../libs/sqlite3.h"
 
 
 // Enlazar Winsock
@@ -31,6 +31,6 @@ void serverMain(sqlite3 *db);
 #define PORT 8080
 
 
-
+*/
 #endif /* INCLUDES_SERVERSOCKET_FINALSERVER_H_ */
 

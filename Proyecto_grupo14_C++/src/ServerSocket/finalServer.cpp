@@ -9,12 +9,12 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <string>
-#include "finalServer.h"
+#include "../../includes/finalServer.h"
 
 extern "C" {
-    #include "../includes/GestorDB.h"
-	#include "../libs/sqlite3.h"
-	#include "../includes/config.h"
+    #include "../../includes/GestorDB.h"
+	#include "../../libs/sqlite3.h"
+	#include "../../includes/config.h"
 }
 
 

@@ -7,7 +7,8 @@
 #include "../includes/interfaz.h"
 #include "../includes/estructuras.h"
 #include "../includes/config.h"
-#include "../includes/ServerSocket/finalServer.h"
+#include "../includes/finalServer.h"
+#include "../includes/server.h"
 #include <stdlib.h>
 
 int main (void){
@@ -55,7 +56,7 @@ int main (void){
 	            	introducirDatosDesdeCSV(db, config);
 	            	break;
 	            case '5':
-	            	serverMain(db);
+	            	run_server(db);
 	            	break;
 	            case 'q':
 	                printf("Saliendo del programa...\n");
