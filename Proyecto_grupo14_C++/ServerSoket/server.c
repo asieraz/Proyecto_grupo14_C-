@@ -114,7 +114,7 @@ void run_server(sqlite3 *db) {
             //------------------------------------
         	sqlite3_stmt *stmt;
 
-        	char sql[] = "select id_Producto, nombre, precio, id_Proveedor, cod_Seccion from producto";
+        	char sql[] = "select id_Producto, nombre, precio, id_Proveedor, cod_Seccion, stock from producto";
 
         	int result = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
         	if (result != SQLITE_OK) {
@@ -129,9 +129,10 @@ void run_server(sqlite3 *db) {
         		double precio = sqlite3_column_double(stmt, 2);
         	    int codProveedor = sqlite3_column_int(stmt, 3);
         	    int codSeccion = sqlite3_column_int(stmt, 4);
+        	    int stock = sqlite3_column_int(stmt, 5);
 
         	   if(!idProd == 0) {
-        		   sprintf(sendBuff, "Producto: %d, Nombre: %s, Precio: %.2f, Proveedor: %d, Seccion: %d\n", idProd, nombreProd, precio, codProveedor, codSeccion);
+        		   sprintf(sendBuff, "Producto: %d, Nombre: %s, Precio: %.2f, Proveedor: %d, Seccion: %d, stock: %d\n", idProd, nombreProd, precio, codProveedor, codSeccion, stock);
         		   send(comm_socket, sendBuff, sizeof(sendBuff), 0);
         	    }
 
