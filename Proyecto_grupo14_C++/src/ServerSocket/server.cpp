@@ -154,7 +154,74 @@ void run_server(sqlite3 *db) {
             send(comm_socket, sendBuff, sizeof(sendBuff), 0);
             printf("Response sent: %s \n", sendBuff);
             fflush(stdout);
-        } else if (strcmp(recvBuff, "EXIT") == 0) {
+        } else if (strcmp(recvBuff, "Anadir stock") == 0) {
+        	memset(recvBuff, 0, sizeof(recvBuff));
+
+        	// Recibir ID del producto
+        	recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	int idProducto = atoi(recvBuff);
+        	printf("ID producto recibido: %d\n", idProducto);
+
+        	// Recibir cantidad a añadir
+        	memset(recvBuff, 0, sizeof(recvBuff));
+        	recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	int cantidad = atoi(recvBuff);
+        	printf("Cantidad a añadir: %d\n", cantidad);
+
+        	// Obtener el stock actual
+        	sqlite3_stmt *stmt;
+        	char selectSQL[] = "SELECT stock FROM producto WHERE id_Producto = ?";
+        	int result = sqlite3_prepare_v2(db, selectSQL, -1, &stmt, NULL);
+        	if (result != SQLITE_OK) {
+        		printf("Error preparando SELECT: %s\n", sqlite3_errmsg(db));
+        		return;
+        	}
+
+        	sqlite3_bind_int(stmt, 1, idProducto); //Sirve para poner el valor en la interrogacion de la consulta
+
+        	int stockActual = -1;
+        	if (sqlite3_step(stmt) == SQLITE_ROW) {
+        		stockActual = sqlite3_column_int(stmt, 0);
+        	}
+        	sqlite3_finalize(stmt);
+
+        	if (stockActual == -1) {
+        		sprintf(sendBuff, "❌ Producto con ID %d no encontrado.\n", idProducto);
+        		send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        		return;
+        	}
+
+        	int nuevoStock = stockActual + cantidad;
+
+        	// Actualizar en la BD
+        	char updateSQL[] = "UPDATE producto SET stock = ? WHERE id_Producto = ?";
+        	result = sqlite3_prepare_v2(db, updateSQL, -1, &stmt, NULL);
+        	if (result != SQLITE_OK) {
+        		printf("Error preparando UPDATE: %s\n", sqlite3_errmsg(db));
+        		return;
+        	}
+
+        	sqlite3_bind_int(stmt, 1, nuevoStock);
+        	sqlite3_bind_int(stmt, 2, idProducto);
+
+        	if (sqlite3_step(stmt) != SQLITE_DONE) {
+        		printf("Error al ejecutar UPDATE: %s\n", sqlite3_errmsg(db));
+        		sqlite3_finalize(stmt);
+        		return;
+        	}
+
+        	sqlite3_finalize(stmt);
+
+        	// Confirmar al cliente
+        	sprintf(sendBuff, "Stock del producto %d actualizado a %d unidades.\n", idProducto, nuevoStock);
+        	send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+
+        	printf("Stock actualizado correctamente.\n");
+        	fflush(stdout);
+
+        }
+
+        else if (strcmp(recvBuff, "EXIT") == 0) {
             break;
         }
     } while (1);
