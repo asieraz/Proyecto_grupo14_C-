@@ -60,6 +60,30 @@ void crearTablasInit(sqlite3 *db) {
 			"FOREIGN KEY(cod_Seccion) REFERENCES seccion(cod_seccion) ON DELETE CASCADE"
 			");";
 
+			"CREATE TABLE IF NOT EXISTS cliente ("
+			"DNI TEXT PRIMARY KEY, "
+			"nombre TEXT, "
+			"codPostal INTEGER, "
+			"contrasena TEXT "
+			");";
+
+			"CREATE TABLE IF NOT EXISTS compra ("
+			"id_Compra INTEGER PRIMARY KEY AUTOINCREMENT, "
+			"fecha TEXT, "
+			"DNI TEXT, "
+			"FOREIGN KEY(DNI) REFERENCES cliente(DNI) ON DELETE CASCADE"
+			");";
+
+			"CREATE TABLE IF NOT EXISTS productoEnCompra ("
+			"id_Compra INTEGER, "
+			"id_Producto INTEGER, "
+			"cantidad INTEGER, "
+			"PRIMARY KEY (id_Compra, id_Producto), "
+			"FOREIGN KEY(id_Compra) REFERENCES compra(id_Compra), "
+			"FOREIGN KEY(id_Producto) REFERENCES producto(id_Producto) "
+			");";
+
+
 
 	int ejecutar = sqlite3_exec(db, sql, 0, 0, &mensajeError);
 
