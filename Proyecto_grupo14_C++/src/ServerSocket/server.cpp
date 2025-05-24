@@ -221,6 +221,85 @@ void run_server(sqlite3 *db) {
 
         }
 
+        else if(strcmp(recvBuff, "REALIZAR COMPRA") == 0) {
+                	char* fecha = "2025-05-24";
+
+                	// Crear nueva compra con fecha fija y DNI NULL
+                	sqlite3_stmt *stmt;
+                	const char *insertCompraSQL = "INSERT INTO compra (fecha, DNI) VALUES (?, NULL);";
+                	int result = sqlite3_prepare_v2(db, insertCompraSQL, -1, &stmt, NULL);
+                	if (result != SQLITE_OK) {
+                		printf("Error preparando INSERT de compra: %s\n", sqlite3_errmsg(db));
+                		return;
+                	}
+
+                	sqlite3_bind_text(stmt, 1, fecha, -1, SQLITE_STATIC); // Fecha fija como texto
+                	sqlite3_step(stmt);
+                	sqlite3_finalize(stmt);
+
+                	int idCompra = (int)sqlite3_last_insert_rowid(db); // Obtener ID de la compra
+
+                	while (1) {
+                		// Pedir ID del producto
+                		send(comm_socket, "ID producto:", 512, 0);
+                		memset(recvBuff, 0, sizeof(recvBuff));
+                		recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                		int idProd = atoi(recvBuff);
+
+                		// Pedir cantidad
+                		send(comm_socket, "Cantidad:", 512, 0);
+                		memset(recvBuff, 0, sizeof(recvBuff));
+                		recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                		int cantidad = atoi(recvBuff);
+
+                		// Consultar stock
+                		const char *selectSQL = "SELECT stock FROM producto WHERE id_Producto = ?";
+                		sqlite3_prepare_v2(db, selectSQL, -1, &stmt, NULL);
+                		sqlite3_bind_int(stmt, 1, idProd);
+                		int stock = -1;
+
+                		if (sqlite3_step(stmt) == SQLITE_ROW) {
+                	        	stock = sqlite3_column_int(stmt, 0);
+                		}
+                		sqlite3_finalize(stmt);
+
+                		if (stock < cantidad || stock == -1) {
+                			send(comm_socket, "Stock insuficiente o producto no existe.\n", 512, 0);
+                		}
+                		else {
+                			// Insertar en ProductoEnCompra
+                			const char *insertProd = "INSERT INTO ProductoEnCompra (id_Compra, id_Producto, cantidad) VALUES (?, ?, ?);";
+                			sqlite3_prepare_v2(db, insertProd, -1, &stmt, NULL);
+                			sqlite3_bind_int(stmt, 1, idCompra);
+                			sqlite3_bind_int(stmt, 2, idProd);
+                			sqlite3_bind_int(stmt, 3, cantidad);
+                			sqlite3_step(stmt);
+                			sqlite3_finalize(stmt);
+
+                			// Actualizar stock
+                			const char *updateStock = "UPDATE producto SET stock = stock - ? WHERE id_Producto = ?";
+                			sqlite3_prepare_v2(db, updateStock, -1, &stmt, NULL);
+                			sqlite3_bind_int(stmt, 1, cantidad);
+                			sqlite3_bind_int(stmt, 2, idProd);
+                			sqlite3_step(stmt);
+                			sqlite3_finalize(stmt);
+
+                			send(comm_socket, "Producto añadido a la compra.\n", 512, 0);
+                		}
+
+                		// Preguntar si quiere añadir más
+                		send(comm_socket, "¿Desea añadir otro producto? (s/n):", 512, 0);
+                		memset(recvBuff, 0, sizeof(recvBuff));
+                		recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+
+                		if (recvBuff[0] == 'n' || recvBuff[0] == 'N') {
+                			break;
+                		}
+                	}
+
+                	send(comm_socket, "Compra finalizada.\n", 512, 0);
+                }
+
         else if (strcmp(recvBuff, "EXIT") == 0) {
             break;
         }

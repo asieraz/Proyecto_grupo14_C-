@@ -18,7 +18,10 @@ void dropTables(sqlite3 * db) {
     			"DROP TABLE IF EXISTS departamento; "
                 "DROP TABLE IF EXISTS proveedor; "
     			"DROP TABLE IF EXISTS empleado; "
-                "DROP TABLE IF EXISTS seccion; ";
+                "DROP TABLE IF EXISTS seccion; "
+    			"DROP TABLE IF EXISTS compra;"
+    			"DROP TABLE IF EXISTS cliente;"
+    			"DROP TABLE IF EXISTS productoEnCompra;";
 
     if (sqlite3_exec(db, sql, 0, 0, &errMsg) != SQLITE_OK) {
         printf("Error al borrar tablas: %s\n", errMsg);
