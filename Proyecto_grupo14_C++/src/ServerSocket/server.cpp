@@ -304,6 +304,8 @@ void run_server(sqlite3 *db) {
             strcpy(sendBuff,
                 "Opciones de búsqueda:\n"
                 "1. Buscar por nombre\n"
+            	"2. Buscar por seccion\n"
+            	"3. Buscar por id\n"
                 "4. Buscar por precio (mayor o menor que X)\n"
                 "5. Buscar por stock (mayor o menor que X)\n"
                 "Selecciona opcion (1, 4, 5): ");
@@ -326,6 +328,28 @@ void run_server(sqlite3 *db) {
                 const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE nombre LIKE ?;";
                 sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
                 sqlite3_bind_text(stmt, 1, likeQuery, -1, SQLITE_STATIC);
+            }
+
+            else if (opcion == 2) {
+                // Buscar por seccion
+                send(comm_socket, "Introduce código de sección: ", 512, 0);
+                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                int codSeccion = atoi(recvBuff);
+
+                const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE cod_Seccion = ?;";
+                sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+                sqlite3_bind_int(stmt, 1, codSeccion);
+            }
+
+            else if (opcion == 3) {
+                // Buscar por ID de producto
+                send(comm_socket, "Introduce ID del producto: ", 512, 0);
+                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                int idProd = atoi(recvBuff);
+
+                const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE id_Producto = ?;";
+                sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+                sqlite3_bind_int(stmt, 1, idProd);
             }
 
             else if (opcion == 4) {
