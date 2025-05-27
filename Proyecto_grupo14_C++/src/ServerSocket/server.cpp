@@ -299,6 +299,98 @@ void run_server(sqlite3 *db) {
 
                 	send(comm_socket, "Compra finalizada.\n", 512, 0);
                 }
+        else if (strcmp(recvBuff, "BUSCADOR") == 0) {
+            // Enviar menú
+            strcpy(sendBuff,
+                "Opciones de búsqueda:\n"
+                "1. Buscar por nombre\n"
+                "4. Buscar por precio (mayor o menor que X)\n"
+                "5. Buscar por stock (mayor o menor que X)\n"
+                "Selecciona opcion (1, 4, 5): ");
+            send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+
+            // Recibir opción
+            memset(recvBuff, 0, sizeof(recvBuff));
+            recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+            int opcion = atoi(recvBuff);
+
+            sqlite3_stmt *stmt;
+
+            if (opcion == 1) {
+                // Buscar por nombre parcial
+                send(comm_socket, "Introduce parte del nombre: ", 512, 0);
+                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                char likeQuery[128];
+                snprintf(likeQuery, sizeof(likeQuery), "%%%s%%", recvBuff);
+
+                const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE nombre LIKE ?;";
+                sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+                sqlite3_bind_text(stmt, 1, likeQuery, -1, SQLITE_STATIC);
+            }
+
+            else if (opcion == 4) {
+                // Buscar por precio
+                send(comm_socket, "Buscar precio (mayor o menor): (mayor/menor): ", 512, 0);
+                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                int mayor = 0;
+                if (strcmp(recvBuff, "mayor") == 0) {
+                    mayor = 1;
+                }
+
+                send(comm_socket, "Introduce valor de precio: ", 512, 0);
+                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                float precio = atof(recvBuff);
+
+                if (mayor == 1) {
+                    const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE precio >= ?;";
+                    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+                    sqlite3_bind_double(stmt, 1, precio);
+                } else {
+                    const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE precio <= ?;";
+                    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+                    sqlite3_bind_double(stmt, 1, precio);
+                }
+            }
+
+            else if (opcion == 5) {
+                // Buscar por stock
+                send(comm_socket, "Buscar stock (mayor o menor): (mayor/menor): ", 512, 0);
+                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                int mayor = 0;
+                if (strcmp(recvBuff, "mayor") == 0) {
+                    mayor = 1;
+                }
+
+                send(comm_socket, "Introduce valor de stock: ", 512, 0);
+                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                int stock = atoi(recvBuff);
+
+                if (mayor == 1) {
+                    const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE stock >= ?;";
+                    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+                    sqlite3_bind_int(stmt, 1, stock);
+                } else {
+                    const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE stock <= ?;";
+                    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+                    sqlite3_bind_int(stmt, 1, stock);
+                }
+            }
+
+            // Mostrar resultados
+            while (sqlite3_step(stmt) == SQLITE_ROW) {
+                int id = sqlite3_column_int(stmt, 0);
+                const unsigned char *nombre = sqlite3_column_text(stmt, 1);
+                double precio = sqlite3_column_double(stmt, 2);
+                int stock = sqlite3_column_int(stmt, 3);
+
+                sprintf(sendBuff, "ID: %d | %s | Precio: %.2f | Stock: %d\n", id, nombre, precio, stock);
+                send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+            }
+
+            sqlite3_finalize(stmt);
+            strcpy(sendBuff, "BUSCADOR-END");
+            send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        }
 
         else if (strcmp(recvBuff, "EXIT") == 0) {
             break;
