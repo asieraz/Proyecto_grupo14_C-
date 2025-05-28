@@ -222,83 +222,104 @@ void run_server(sqlite3 *db) {
         }
 
         else if(strcmp(recvBuff, "REALIZAR COMPRA") == 0) {
-                	char* fecha = "2025-05-24";
+        		char* fecha = "2025-05-24";
+        	    char dniCliente[32];
 
-                	// Crear nueva compra con fecha fija y DNI NULL
-                	sqlite3_stmt *stmt;
-                	const char *insertCompraSQL = "INSERT INTO compra (fecha, DNI) VALUES (?, NULL);";
-                	int result = sqlite3_prepare_v2(db, insertCompraSQL, -1, &stmt, NULL);
-                	if (result != SQLITE_OK) {
-                		printf("Error preparando INSERT de compra: %s\n", sqlite3_errmsg(db));
-                		return;
-                	}
+        	    // PEDIR DNI
+        	    send(comm_socket, "Introduce tu DNI:", 512, 0);
+        	    memset(recvBuff, 0, sizeof(recvBuff));
+        	    recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	    strncpy(dniCliente, recvBuff, sizeof(dniCliente));
+        	    dniCliente[sizeof(dniCliente)-1] = '\0';
 
-                	sqlite3_bind_text(stmt, 1, fecha, -1, SQLITE_STATIC); // Fecha fija como texto
-                	sqlite3_step(stmt);
-                	sqlite3_finalize(stmt);
+        	    // COMPROBAR QUE EXISTE EL CLIENTE
+        	    sqlite3_stmt *stmt;
+        	    const char *checkCliente = "SELECT 1 FROM cliente WHERE DNI = ?";
+        	    sqlite3_prepare_v2(db, checkCliente, -1, &stmt, NULL);
+        	    sqlite3_bind_text(stmt, 1, dniCliente, -1, SQLITE_STATIC);
 
-                	int idCompra = (int)sqlite3_last_insert_rowid(db); // Obtener ID de la compra
+        	    int existeCliente = (sqlite3_step(stmt) == SQLITE_ROW);
+        	    sqlite3_finalize(stmt);
 
-                	while (1) {
-                		// Pedir ID del producto
-                		send(comm_socket, "ID producto:", 512, 0);
-                		memset(recvBuff, 0, sizeof(recvBuff));
-                		recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
-                		int idProd = atoi(recvBuff);
+        	    if (!existeCliente) {
+        	        send(comm_socket, "Cliente no encontrado. Compra cancelada.\n", 512, 0);
+        	        return;
+        	    }
 
-                		// Pedir cantidad
-                		send(comm_socket, "Cantidad:", 512, 0);
-                		memset(recvBuff, 0, sizeof(recvBuff));
-                		recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
-                		int cantidad = atoi(recvBuff);
+        	    // INSERTAR COMPRA CON DNI VÁLIDO
+        	    const char *insertCompraSQL = "INSERT INTO compra (fecha, DNI) VALUES (?, ?);";
+        	    int result = sqlite3_prepare_v2(db, insertCompraSQL, -1, &stmt, NULL);
+        	    if (result != SQLITE_OK) {
+        	        printf("Error preparando INSERT de compra: %s\n", sqlite3_errmsg(db));
+        	        return;
+        	    }
 
-                		// Consultar stock
-                		const char *selectSQL = "SELECT stock FROM producto WHERE id_Producto = ?";
-                		sqlite3_prepare_v2(db, selectSQL, -1, &stmt, NULL);
-                		sqlite3_bind_int(stmt, 1, idProd);
-                		int stock = -1;
+        	    sqlite3_bind_text(stmt, 1, fecha, -1, SQLITE_STATIC);
+        	    sqlite3_bind_text(stmt, 2, dniCliente, -1, SQLITE_STATIC);
+        	    sqlite3_step(stmt);
+        	    sqlite3_finalize(stmt);
 
-                		if (sqlite3_step(stmt) == SQLITE_ROW) {
-                	        	stock = sqlite3_column_int(stmt, 0);
-                		}
-                		sqlite3_finalize(stmt);
+        	    int idCompra = (int)sqlite3_last_insert_rowid(db);
 
-                		if (stock < cantidad || stock == -1) {
-                			send(comm_socket, "Stock insuficiente o producto no existe.\n", 512, 0);
-                		}
-                		else {
-                			// Insertar en ProductoEnCompra
-                			const char *insertProd = "INSERT INTO ProductoEnCompra (id_Compra, id_Producto, cantidad) VALUES (?, ?, ?);";
-                			sqlite3_prepare_v2(db, insertProd, -1, &stmt, NULL);
-                			sqlite3_bind_int(stmt, 1, idCompra);
-                			sqlite3_bind_int(stmt, 2, idProd);
-                			sqlite3_bind_int(stmt, 3, cantidad);
-                			sqlite3_step(stmt);
-                			sqlite3_finalize(stmt);
+        	    // BUCLE DE PRODUCTOS
+        	    while (1) {
+        	        send(comm_socket, "ID producto:", 512, 0);
+        	        memset(recvBuff, 0, sizeof(recvBuff));
+        	        recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	        int idProd = atoi(recvBuff);
 
-                			// Actualizar stock
-                			const char *updateStock = "UPDATE producto SET stock = stock - ? WHERE id_Producto = ?";
-                			sqlite3_prepare_v2(db, updateStock, -1, &stmt, NULL);
-                			sqlite3_bind_int(stmt, 1, cantidad);
-                			sqlite3_bind_int(stmt, 2, idProd);
-                			sqlite3_step(stmt);
-                			sqlite3_finalize(stmt);
+        	        send(comm_socket, "Cantidad:", 512, 0);
+        	        memset(recvBuff, 0, sizeof(recvBuff));
+        	        recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	        int cantidad = atoi(recvBuff);
 
-                			send(comm_socket, "Producto añadido a la compra.\n", 512, 0);
-                		}
+        	        // CONSULTAR STOCK
+        	        const char *selectSQL = "SELECT stock FROM producto WHERE id_Producto = ?";
+        	        sqlite3_prepare_v2(db, selectSQL, -1, &stmt, NULL);
+        	        sqlite3_bind_int(stmt, 1, idProd);
+        	        int stock = -1;
 
-                		// Preguntar si quiere añadir más
-                		send(comm_socket, "¿Desea añadir otro producto? (s/n):", 512, 0);
-                		memset(recvBuff, 0, sizeof(recvBuff));
-                		recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	        if (sqlite3_step(stmt) == SQLITE_ROW) {
+        	            stock = sqlite3_column_int(stmt, 0);
+        	        }
+        	        sqlite3_finalize(stmt);
 
-                		if (recvBuff[0] == 'n' || recvBuff[0] == 'N') {
-                			break;
-                		}
-                	}
+        	        if (stock < cantidad || stock == -1) {
+        	            send(comm_socket, "Stock insuficiente o producto no existe.\n", 512, 0);
+        	        } else {
+        	            // INSERTAR EN PRODUCTOENCOMPRA
+        	            const char *insertProd = "INSERT INTO ProductoEnCompra (id_Compra, id_Producto, cantidad) VALUES (?, ?, ?);";
+        	            sqlite3_prepare_v2(db, insertProd, -1, &stmt, NULL);
+        	            sqlite3_bind_int(stmt, 1, idCompra);
+        	            sqlite3_bind_int(stmt, 2, idProd);
+        	            sqlite3_bind_int(stmt, 3, cantidad);
+        	            sqlite3_step(stmt);
+        	            sqlite3_finalize(stmt);
 
-                	send(comm_socket, "Compra finalizada.\n", 512, 0);
+        	            // ACTUALIZAR STOCK
+        	            const char *updateStock = "UPDATE producto SET stock = stock - ? WHERE id_Producto = ?";
+        	            sqlite3_prepare_v2(db, updateStock, -1, &stmt, NULL);
+        	            sqlite3_bind_int(stmt, 1, cantidad);
+        	            sqlite3_bind_int(stmt, 2, idProd);
+        	            sqlite3_step(stmt);
+        	            sqlite3_finalize(stmt);
+
+        	            send(comm_socket, "Producto anadido a la compra.\n", 512, 0);
+        	        }
+
+        	        // ¿QUIERE AÑADIR OTRO?
+        	        send(comm_socket, "¿Desea anadir otro producto? (s/n):", 512, 0);
+        	        memset(recvBuff, 0, sizeof(recvBuff));
+        	        recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+
+        	        if (recvBuff[0] == 'n' || recvBuff[0] == 'N') {
+        	            break;
+        	        }
+        	    }
+
+        	    send(comm_socket, "Compra finalizada.\n", 512, 0);
                 }
+
         else if (strcmp(recvBuff, "BUSCADOR") == 0) {
             // Enviar menú
             strcpy(sendBuff,
@@ -414,6 +435,66 @@ void run_server(sqlite3 *db) {
             sqlite3_finalize(stmt);
             strcpy(sendBuff, "BUSCADOR-END");
             send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        }
+
+        else if (strcmp(recvBuff, "COMPRAS CLIENTE") == 0) {
+        	// Pedir DNI
+        	    send(comm_socket, "Introduce tu DNI:", 512, 0);
+        	    memset(recvBuff, 0, sizeof(recvBuff));
+        	    recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	    char dni[32];
+        	    strncpy(dni, recvBuff, sizeof(dni));
+        	    dni[sizeof(dni)-1] = '\0';
+
+        	    // Validar cliente
+        	    sqlite3_stmt *stmt;
+        	    const char *checkSQL = "SELECT 1 FROM cliente WHERE DNI = ?";
+        	    sqlite3_prepare_v2(db, checkSQL, -1, &stmt, NULL);
+        	    sqlite3_bind_text(stmt, 1, dni, -1, SQLITE_STATIC);
+
+        	    int exists = (sqlite3_step(stmt) == SQLITE_ROW);
+        	    sqlite3_finalize(stmt);
+
+        	    if (!exists) {
+        	        strcpy(sendBuff, "Cliente no encontrado. Volviendo al menu.\nCOMPRAS-END");
+        	        send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	        return;
+        	    }
+
+        	    // Buscar compras del cliente
+        	    const char *compraSQL = "SELECT id_Compra, fecha FROM compra WHERE DNI = ?;";
+        	    sqlite3_prepare_v2(db, compraSQL, -1, &stmt, NULL);
+        	    sqlite3_bind_text(stmt, 1, dni, -1, SQLITE_STATIC);
+
+        	    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        	        int idCompra = sqlite3_column_int(stmt, 0);
+        	        const unsigned char *fecha = sqlite3_column_text(stmt, 1);
+
+        	        sprintf(sendBuff, "🧾 Compra #%d | Fecha: %s\n", idCompra, fecha);
+        	        send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+
+        	        sqlite3_stmt *stmtProd;
+        	        const char *prodSQL =
+        	            "SELECT producto.nombre, productoEnCompra.cantidad "
+        	            "FROM productoEnCompra "
+        	            "JOIN producto ON producto.id_Producto = productoEnCompra.id_Producto "
+        	            "WHERE productoEnCompra.id_Compra = ?;";
+        	        sqlite3_prepare_v2(db, prodSQL, -1, &stmtProd, NULL);
+        	        sqlite3_bind_int(stmtProd, 1, idCompra);
+
+        	        while (sqlite3_step(stmtProd) == SQLITE_ROW) {
+        	            const unsigned char *nombre = sqlite3_column_text(stmtProd, 0);
+        	            int cantidad = sqlite3_column_int(stmtProd, 1);
+        	            sprintf(sendBuff, "   - %s (x%d)\n", nombre, cantidad);
+        	            send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	        }
+        	        sqlite3_finalize(stmtProd);
+        	        send(comm_socket, "\n", sizeof(sendBuff), 0);
+        	    }
+
+        	    sqlite3_finalize(stmt);
+        	    strcpy(sendBuff, "COMPRAS-END");
+        	    send(comm_socket, sendBuff, sizeof(sendBuff), 0);
         }
 
         else if (strcmp(recvBuff, "EXIT") == 0) {
