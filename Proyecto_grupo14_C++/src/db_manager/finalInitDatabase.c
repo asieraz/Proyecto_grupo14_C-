@@ -58,21 +58,21 @@ void crearTablasInit(sqlite3 *db) {
 			"stock INTEGER, "
 			"FOREIGN KEY(id_Proveedor) REFERENCES proveedor(id_Proveedor) ON DELETE CASCADE, "
 			"FOREIGN KEY(cod_Seccion) REFERENCES seccion(cod_seccion) ON DELETE CASCADE"
-			");";
+			");"
 
 			"CREATE TABLE IF NOT EXISTS cliente ("
 			"DNI TEXT PRIMARY KEY, "
 			"nombre TEXT, "
 			"codPostal INTEGER, "
 			"contrasena TEXT "
-			");";
+			");"
 
 			"CREATE TABLE IF NOT EXISTS compra ("
 			"id_Compra INTEGER PRIMARY KEY AUTOINCREMENT, "
 			"fecha TEXT, "
 			"DNI TEXT, "
 			"FOREIGN KEY(DNI) REFERENCES cliente(DNI) ON DELETE CASCADE"
-			");";
+			");"
 
 			"CREATE TABLE IF NOT EXISTS productoEnCompra ("
 			"id_Compra INTEGER, "
@@ -354,6 +354,33 @@ void cargarProductosInit(sqlite3 *db, char* archivos_csv) {
     fclose(archivo);
 }
 
+void insertarClientesManualmente(sqlite3 *db) {
+    const char *clientes[] = {
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('11111111A', 'Ana López', 48001, 'ana123');",
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('22222222B', 'Juan Pérez', 48002, 'juan123');",
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('33333333C', 'Lucía García', 48003, 'lucia123');",
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('44444444D', 'Carlos Ruiz', 48004, 'carlos123');",
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('55555555E', 'María Sánchez', 48005, 'maria123');",
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('66666666F', 'Pedro Gómez', 48006, 'pedro123');",
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('77777777G', 'Laura Torres', 48007, 'laura123');",
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('88888888H', 'Sergio Díaz', 48008, 'sergio123');",
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('99999999I', 'Carmen Martín', 48009, 'carmen123');",
+        "INSERT INTO cliente (DNI, nombre, codPostal, contrasena) VALUES ('00000000J', 'Alberto Fernández', 48010, 'alberto123');"
+    };
+
+    char *errorMsg = NULL;
+
+    for (int i = 0; i < 10; i++) {
+        int result = sqlite3_exec(db, clientes[i], 0, 0, &errorMsg);
+        if (result != SQLITE_OK) {
+            printf("Error al insertar cliente %d: %s\n", i + 1, errorMsg);
+            sqlite3_free(errorMsg);
+        } else {
+            printf("Cliente %d insertado correctamente.\n", i + 1);
+        }
+    }
+}
+
 void introducirDatosDesdeCSV(sqlite3 *db, Config config) {
 	printf("Introduciendo datos base desde los CSVs...\n");
 
@@ -375,5 +402,8 @@ void introducirDatosDesdeCSV(sqlite3 *db, Config config) {
 
 		cargarProductosInit(db, config.fichero_productos);
 		printf("Productos añadidos\n");
+
+		insertarClientesManualmente(db);
+		printf("Clientes anadidos");
 
 }
