@@ -14,12 +14,13 @@
 #include "../../includes/interfaz.h"
 #include "../../includes/estructuras.h"
 #include "../../includes/config.h"
-#include "../../libs/sqlite3.h"
 #include "../../includes/server.h"
 #include <stdio.h>
+#include <time.h>
 #include <winsock2.h>
 #include <math.h>
 #include <string.h>
+
 
 #define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 6000
@@ -95,20 +96,21 @@ void run_server(sqlite3 *db) {
         printf("Command received: %s \n", recvBuff); //muestra el mensaje que ha mandado el cliente
         fflush(stdout);
 
-        if (strcmp(recvBuff, "SUMAR") == 0) { //si el recvBuff == "SUMAR"
-            int suma = 0;
-            do {
-                memset(recvBuff, 0, sizeof(recvBuff)); //vacia recvBuff
-                recv(comm_socket, recvBuff, sizeof(recvBuff), 0);//el cliente va a mandar numeros hasta que mande un "SUMAR-END" que sera la señal de que ya ha terminado
-                if (strcmp(recvBuff, "SUMAR-END") != 0) {//si el recvBuff no es igual a "SUMAR-END" suma el numero recivido
-                    int n = atoi(recvBuff); //combierte el numero recivido a un entero
-                    suma += n;
-                }
-            } while (strcmp(recvBuff, "SUMAR-END") != 0); //repite el proceso hasta que recvBuff = "SUMAR-END"
-            sprintf(sendBuff, "%d", suma); //transforma el resultado en un string y lo guarda en sendBuff
-            send(comm_socket, sendBuff, sizeof(sendBuff), 0); //envia el resultado al cliente
-            printf("Response sent: %s \n", sendBuff); //printea la respuesta que se le ha dado al cliente
-            fflush(stdout);
+
+        if (strcmp(recvBuff, "LOGIN-EMPLEADO") == 0) {
+        	const char *mensaje = "Introduce tu nombre y apellido (Separado por un espacio):\n";
+        	send(comm_socket, mensaje, strlen(mensaje), 0);
+
+        	memset(recvBuff, 0, sizeof(recvBuff));
+        	recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+
+        	char nombreYAp[50];
+        	strncpy(nombreYAp, recvBuff, sizeof(nombreYAp));
+        	nombreYAp[sizeof(nombreYAp)-1] = '\0';
+
+        	Empleado empleadoIniciado = obtenerEmpleadoPorNombre(db, nombreYAp);
+        	printf(empleadoIniciado.nombreEmpleado);
+        	fflush(stdout);
 
         } else if (strcmp(recvBuff, "MOSTRAR") == 0) {
             memset(recvBuff, 0, sizeof(recvBuff));
@@ -222,8 +224,13 @@ void run_server(sqlite3 *db) {
         }
 
         else if(strcmp(recvBuff, "REALIZAR COMPRA") == 0) {
-        		char* fecha = "2025-05-24";
-        	    char dniCliente[32];
+        		time_t t = time(NULL);
+        		struct tm tm = *localtime(&t);
+
+        		char fecha[11]; // fecha + null terminator
+        		strftime(fecha, sizeof(fecha), "%Y-%m-%d", &tm);
+
+        		char dniCliente[32];
 
         	    // PEDIR DNI
         	    send(comm_socket, "Introduce tu DNI:", 512, 0);

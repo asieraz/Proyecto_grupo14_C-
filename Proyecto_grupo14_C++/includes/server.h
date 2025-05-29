@@ -10,7 +10,7 @@
 
 #include "finalInitDatabase.h"
 #include "anadirDatosDB.h"
-#include "gestorDB.h"
+
 #include "../libs/sqlite3.h"
 #include "interfaz.h"
 #include "estructuras.h"
@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 void run_server(sqlite3 *db);
+#include "GestorDB.h"
 
 #ifdef __cplusplus
 }

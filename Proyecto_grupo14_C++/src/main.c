@@ -69,6 +69,5 @@ int main (void){
 
 
 	sqlite3_close(db);
-
 }
 

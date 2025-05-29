@@ -37,4 +37,16 @@ void mostrarEmpleados(sqlite3 *db);
 void obtenerAdministrativo(sqlite3 *db, Empleado *e);
 
 void editarJefeDepartamento(sqlite3 *db, int i, Config config);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+Empleado obtenerEmpleadoPorNombre(sqlite3 *db, const char *nombreCompleto);
+// ... otros prototipos que vienen de código C
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* SRC_DB_MANAGER_GESTORDB_H_ */

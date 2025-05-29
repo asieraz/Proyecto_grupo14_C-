@@ -407,3 +407,34 @@ void editarJefeDepartamento(sqlite3 *db, int numDept, Config config) {
     }
 }
 
+Empleado obtenerEmpleadoPorNombre(sqlite3 *db, const char *nombreCompleto) {
+    Empleado empleadoEncontrado;
+    memset(&empleadoEncontrado, 0, sizeof(Empleado));  // Inicializa a cero
+
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT NSS_Empleado, nombre, contrasena, id_Departamento, id_Seccion "
+                      "FROM empleado WHERE nombre = ?";
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, 0) != SQLITE_OK) {
+        fprintf(stderr, "Error al preparar la consulta: %s\n", sqlite3_errmsg(db));
+        return empleadoEncontrado;
+    }
+
+    // Bind del parámetro nombre
+    sqlite3_bind_text(stmt, 1, nombreCompleto, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        empleadoEncontrado.NSS = sqlite3_column_int(stmt, 0);
+        strncpy(empleadoEncontrado.nombreEmpleado, (const char *)sqlite3_column_text(stmt, 1), sizeof(empleadoEncontrado.nombreEmpleado) - 1);
+        strncpy(empleadoEncontrado.contrasena, (const char *)sqlite3_column_text(stmt, 2), sizeof(empleadoEncontrado.contrasena) - 1);
+        empleadoEncontrado.idDepartamento = sqlite3_column_int(stmt, 3);
+        empleadoEncontrado.codSeccion = sqlite3_column_int(stmt, 4);
+    } else {
+        printf("Empleado no encontrado con nombre: %s\n", nombreCompleto);
+    }
+
+    sqlite3_finalize(stmt);
+    return empleadoEncontrado;
+}
+
+
