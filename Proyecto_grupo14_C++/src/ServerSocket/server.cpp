@@ -101,7 +101,7 @@ void run_server(sqlite3 *db, char* ip_server) {
 
         if (strcmp(recvBuff, "LOGIN-EMPLEADO") == 0) {
 
-        	const char *mensaje = "Introduce tu nombre y apellido (Separado por un espacio):\n";
+        	const char *mensaje = "Empleado, introduce tu nombre y apellido (Separado por un espacio):\n";
         	send(comm_socket, mensaje, strlen(mensaje) + 1, 0); // incluye \0
         	logComando("ENVIADO", sendBuff);
 
@@ -146,7 +146,7 @@ void run_server(sqlite3 *db, char* ip_server) {
         	}
 
         } else if (strcmp(recvBuff, "LOGIN-CLIENTE") == 0) {
-            const char *mensaje = "Introduce tu nombre:\n";
+            const char *mensaje = "Cliente, introduce tu nombre y apellido (Separado por un espacio):\n";
             send(comm_socket, mensaje, strlen(mensaje) + 1, 0); // incluye \0
 
             memset(recvBuff, 0, sizeof(recvBuff));
@@ -170,7 +170,7 @@ void run_server(sqlite3 *db, char* ip_server) {
             }
 
         } else if (strcmp(recvBuff, "LOGIN-PROVEEDOR") == 0) {
-        	const char *mensaje = "Introduce el nombre del proveedor:\n";
+        	const char *mensaje = "Proveedor, ntroduce tu nombre y apellido (Separado por un espacio):\n";
         	send(comm_socket, mensaje, strlen(mensaje) + 1, 0); // incluye \0
 
         	memset(recvBuff, 0, sizeof(recvBuff));
