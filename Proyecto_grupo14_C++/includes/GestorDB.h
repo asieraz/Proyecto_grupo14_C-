@@ -43,6 +43,10 @@ extern "C" {
 #endif
 
 Empleado obtenerEmpleadoPorNombre(sqlite3 *db, const char *nombreCompleto);
+
+Cliente obtenerClientePorNombre(sqlite3 *db, const char *nombreBuscado);
+
+Proveedor obtenerProveedorPorNombre(sqlite3 *db, const char *nombreBuscado);
 // ... otros prototipos que vienen de código C
 
 #ifdef __cplusplus

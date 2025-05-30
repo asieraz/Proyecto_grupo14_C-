@@ -46,7 +46,7 @@ typedef struct {
 	char DNI[20];
 	char nombreCliente[30];
 	int codPostal;
-	char contrasenaCliente[30]
+	char contrasenaCliente[30];
 } Cliente;
 
 #endif /* INCLUDES_ESTRUCTURAS_H_ */

@@ -134,6 +134,53 @@ void run_server(sqlite3 *db) {
         	    send(comm_socket, mensaje, strlen(mensaje) + 1, 0);
         	}
 
+        } else if (strcmp(recvBuff, "LOGIN-CLIENTE") == 0) {
+            const char *mensaje = "Introduce tu nombre:\n";
+            send(comm_socket, mensaje, strlen(mensaje) + 1, 0); // incluye \0
+
+            memset(recvBuff, 0, sizeof(recvBuff));
+            recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+
+            char nombreCliente[30];
+            strncpy(nombreCliente, recvBuff, sizeof(nombreCliente));
+            nombreCliente[sizeof(nombreCliente) - 1] = '\0';
+
+            Cliente clienteIniciado = obtenerClientePorNombre(db, nombreCliente);
+
+            if (strcmp(clienteIniciado.nombreCliente, nombreCliente) == 0) {
+                const char *mensaje = "ENCONTRADO";
+                send(comm_socket, mensaje, strlen(mensaje) + 1, 0);
+
+                // Enviar estructura Cliente
+                send(comm_socket, (const char *)&clienteIniciado, sizeof(Cliente), 0);
+            } else {
+                const char *mensaje = "NO-ENCONTRADO";
+                send(comm_socket, mensaje, strlen(mensaje) + 1, 0);
+            }
+
+        } else if (strcmp(recvBuff, "LOGIN-PROVEEDOR") == 0) {
+        	const char *mensaje = "Introduce el nombre del proveedor:\n";
+        	send(comm_socket, mensaje, strlen(mensaje) + 1, 0); // incluye \0
+
+        	memset(recvBuff, 0, sizeof(recvBuff));
+        	recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+
+        	char nombreProveedor[30];
+        	strncpy(nombreProveedor, recvBuff, sizeof(nombreProveedor));
+        	nombreProveedor[sizeof(nombreProveedor) - 1] = '\0';
+
+        	Proveedor proveedorIniciado = obtenerProveedorPorNombre(db, nombreProveedor);
+
+        	if (strcmp(proveedorIniciado.nombreProveedor, nombreProveedor) == 0) {
+        		const char *mensaje = "ENCONTRADO";
+        		send(comm_socket, mensaje, strlen(mensaje) + 1, 0);
+
+        		// Enviar estructura Proveedor
+        		send(comm_socket, (const char *)&proveedorIniciado, sizeof(Proveedor), 0);
+        	} else {
+        		const char *mensaje = "NO-ENCONTRADO";
+        		send(comm_socket, mensaje, strlen(mensaje) + 1, 0);
+        	}
 
 
         } else if (strcmp(recvBuff, "MOSTRAR") == 0) {
