@@ -437,4 +437,46 @@ Empleado obtenerEmpleadoPorNombre(sqlite3 *db, const char *nombreCompleto) {
     return empleadoEncontrado;
 }
 
+Cliente obtenerClientePorNombre(sqlite3 *db, const char *nombreBuscado) {
+    Cliente cliente = {0};
+    sqlite3_stmt *stmt;
+
+    const char *sql = "SELECT DNI, nombre, codPostal, contrasena FROM cliente WHERE nombre = ?";
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, nombreBuscado, -1, SQLITE_STATIC);
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            strncpy(cliente.DNI, (const char *)sqlite3_column_text(stmt, 0), sizeof(cliente.DNI) - 1);
+            strncpy(cliente.nombreCliente, (const char *)sqlite3_column_text(stmt, 1), sizeof(cliente.nombreCliente) - 1);
+            cliente.codPostal = sqlite3_column_int(stmt, 2);
+            strncpy(cliente.contrasenaCliente, (const char *)sqlite3_column_text(stmt, 3), sizeof(cliente.contrasenaCliente) - 1);
+        }
+    }
+
+    sqlite3_finalize(stmt);
+    return cliente;
+}
+
+Proveedor obtenerProveedorPorNombre(sqlite3 *db, const char *nombreBuscado) {
+    Proveedor proveedor = {0};
+    sqlite3_stmt *stmt;
+
+    const char *sql = "SELECT id_Proveedor, nombre, codigo_Postal, contrasena FROM proveedor WHERE nombre = ?";
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, nombreBuscado, -1, SQLITE_STATIC);
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            proveedor.codProveedor = sqlite3_column_int(stmt, 0);
+            strncpy(proveedor.nombreProveedor, (const char *)sqlite3_column_text(stmt, 1), sizeof(proveedor.nombreProveedor) - 1);
+            proveedor.codPostal = sqlite3_column_int(stmt, 2);
+            strncpy(proveedor.contrasena, (const char *)sqlite3_column_text(stmt, 3), sizeof(proveedor.contrasena) - 1);
+        }
+    }
+
+    sqlite3_finalize(stmt);
+    return proveedor;
+}
+
 
