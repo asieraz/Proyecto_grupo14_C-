@@ -34,7 +34,10 @@ void cargarConfig(const char* filename, Config* config) {
             strcpy(config->fichero_proveedores, value);
         }else if (strcmp(key, "fichero_secciones") == 0) {
             strcpy(config->fichero_secciones, value);
+        }else if (strcmp(key, "ip_servidor") == 0) {
+            strcpy(config->ip_servidor, value);
         }
+
     }
 
     fclose(file);

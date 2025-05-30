@@ -4,3 +4,4 @@ fichero_empleados: ../../database/datosIniciales/empleados.csv
 fichero_productos: ../../database/datosIniciales/productos.csv
 fichero_proveedores: ../../database/datosIniciales/proveedores.csv
 fichero_secciones: ../../database/datosIniciales/secciones.csv
+ip_servidor: 127.0.0.1
