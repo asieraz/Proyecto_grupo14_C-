@@ -20,6 +20,7 @@
 #include <winsock2.h>
 #include <math.h>
 #include <string.h>
+#include <iostream>
 
 
 #define SERVER_IP "127.0.0.1"
@@ -99,7 +100,7 @@ void run_server(sqlite3 *db) {
 
         if (strcmp(recvBuff, "LOGIN-EMPLEADO") == 0) {
         	const char *mensaje = "Introduce tu nombre y apellido (Separado por un espacio):\n";
-        	send(comm_socket, mensaje, strlen(mensaje), 0);
+        	send(comm_socket, mensaje, strlen(mensaje) + 1, 0); // incluye \0
 
         	memset(recvBuff, 0, sizeof(recvBuff));
         	recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
@@ -109,8 +110,31 @@ void run_server(sqlite3 *db) {
         	nombreYAp[sizeof(nombreYAp)-1] = '\0';
 
         	Empleado empleadoIniciado = obtenerEmpleadoPorNombre(db, nombreYAp);
-        	printf(empleadoIniciado.nombreEmpleado);
-        	fflush(stdout);
+
+        	if (strcmp(empleadoIniciado.nombreEmpleado, nombreYAp) == 0) {
+        	    const char *mensaje = "ENCONTRADO";
+        	    send(comm_socket, mensaje, strlen(mensaje) + 1, 0);
+
+        	    int NSS = htonl(empleadoIniciado.NSS);
+        	    send(comm_socket, (const char *)&NSS, sizeof(NSS), 0);
+
+        	    send(comm_socket, empleadoIniciado.contrasena, strlen(empleadoIniciado.contrasena) + 1, 0);
+        	    std::cout << empleadoIniciado.contrasena << std::endl;
+
+        	    int departamento = htonl(empleadoIniciado.idDepartamento);
+        	    send(comm_socket, (char *)&departamento, sizeof(departamento), 0);
+        	    std::cout << empleadoIniciado.idDepartamento << std::endl;
+
+        	    int seccion = htonl(empleadoIniciado.codSeccion);
+        	    send(comm_socket, (char *)&seccion, sizeof(seccion), 0);
+        	    std::cout << empleadoIniciado.codSeccion << std::endl;
+
+        	} else {
+        	    const char *mensaje = "NO-ENCONTRADO";
+        	    send(comm_socket, mensaje, strlen(mensaje) + 1, 0);
+        	}
+
+
 
         } else if (strcmp(recvBuff, "MOSTRAR") == 0) {
             memset(recvBuff, 0, sizeof(recvBuff));
@@ -233,7 +257,7 @@ void run_server(sqlite3 *db) {
         		char dniCliente[32];
 
         	    // PEDIR DNI
-        	    send(comm_socket, "Introduce tu DNI:", 512, 0);
+        	    send(comm_socket, "Introduce tu DNI:", strlen("Introduce tu DNI:"), 0);
         	    memset(recvBuff, 0, sizeof(recvBuff));
         	    recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
         	    strncpy(dniCliente, recvBuff, sizeof(dniCliente));
