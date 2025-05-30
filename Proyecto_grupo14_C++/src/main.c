@@ -13,7 +13,7 @@
 
 int main (void){
 	Config config;
-	cargarConfig("Debug/config/config.txt", &config);
+	cargarConfig("config/config.txt", &config);
 
 	sqlite3 * db;
 	int abrir = sqlite3_open(config.database, &db);
@@ -56,7 +56,7 @@ int main (void){
 	            	introducirDatosDesdeCSV(db, config);
 	            	break;
 	            case '5':
-	            	run_server(db);
+	            	run_server(db, config.ip_servidor);
 	            	break;
 	            case 'q':
 	                printf("Saliendo del programa...\n");

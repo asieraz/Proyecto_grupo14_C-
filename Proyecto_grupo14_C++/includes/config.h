@@ -15,6 +15,7 @@ typedef struct {
     char fichero_productos[256];
     char fichero_proveedores[256];
     char fichero_secciones[256];
+    char ip_servidor[256];
 } Config;
 
 void cargarConfig(const char* filename, Config* config);

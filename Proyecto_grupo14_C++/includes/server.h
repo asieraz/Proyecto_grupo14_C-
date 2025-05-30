@@ -20,7 +20,7 @@
 extern "C" {
 #endif
 
-void run_server(sqlite3 *db);
+void run_server(sqlite3 *db, char* ip_server);
 #include "GestorDB.h"
 
 #ifdef __cplusplus

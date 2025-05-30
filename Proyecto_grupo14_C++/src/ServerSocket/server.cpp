@@ -24,10 +24,9 @@
 #include <iostream>
 
 
-#define SERVER_IP "127.0.0.1"
 #define SERVER_PORT 6000
 
-void run_server(sqlite3 *db) {
+void run_server(sqlite3 *db, char* ip_server) {
     WSADATA wsaData;
     SOCKET conn_socket;
     SOCKET comm_socket;
@@ -54,7 +53,7 @@ void run_server(sqlite3 *db) {
     printf("Socket created.\n");
     fflush(stdout);
 
-    server.sin_addr.s_addr = inet_addr(SERVER_IP);
+    server.sin_addr.s_addr = inet_addr(ip_server);
     server.sin_family = AF_INET;
     server.sin_port = htons(SERVER_PORT);
 
