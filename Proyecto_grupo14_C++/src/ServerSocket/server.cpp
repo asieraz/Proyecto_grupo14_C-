@@ -15,6 +15,7 @@
 #include "../../includes/estructuras.h"
 #include "../../includes/config.h"
 #include "../../includes/server.h"
+#include "../../includes/logs.h"
 #include <stdio.h>
 #include <time.h>
 #include <winsock2.h>
@@ -94,16 +95,21 @@ void run_server(sqlite3 *db) {
     do {
         memset(recvBuff, 0, sizeof(recvBuff)); //vacia el recvBuff para asegurarse de que este vacio
         recv(comm_socket, recvBuff, sizeof(recvBuff), 0); //recibe el mensaje (normalmente el comando que quiere que el server ejecute) del cliente y lo guarda en recvBuff
+        logComando("RECIBIDO", recvBuff);
         printf("Command received: %s \n", recvBuff); //muestra el mensaje que ha mandado el cliente
         fflush(stdout);
 
 
         if (strcmp(recvBuff, "LOGIN-EMPLEADO") == 0) {
+
         	const char *mensaje = "Introduce tu nombre y apellido (Separado por un espacio):\n";
         	send(comm_socket, mensaje, strlen(mensaje) + 1, 0); // incluye \0
+        	logComando("ENVIADO", sendBuff);
+
 
         	memset(recvBuff, 0, sizeof(recvBuff));
         	recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	logComando("RECIBIDO", recvBuff);
 
         	char nombreYAp[50];
         	strncpy(nombreYAp, recvBuff, sizeof(nombreYAp));
@@ -114,24 +120,30 @@ void run_server(sqlite3 *db) {
         	if (strcmp(empleadoIniciado.nombreEmpleado, nombreYAp) == 0) {
         	    const char *mensaje = "ENCONTRADO";
         	    send(comm_socket, mensaje, strlen(mensaje) + 1, 0);
+        	    logComando("ENVIADO", sendBuff);
 
         	    int NSS = htonl(empleadoIniciado.NSS);
         	    send(comm_socket, (const char *)&NSS, sizeof(NSS), 0);
+        	    logComando("ENVIADO", sendBuff);
 
         	    send(comm_socket, empleadoIniciado.contrasena, strlen(empleadoIniciado.contrasena) + 1, 0);
+        	    logComando("ENVIADO", sendBuff);
         	    std::cout << empleadoIniciado.contrasena << std::endl;
 
         	    int departamento = htonl(empleadoIniciado.idDepartamento);
         	    send(comm_socket, (char *)&departamento, sizeof(departamento), 0);
+        	    logComando("ENVIADO", sendBuff);
         	    std::cout << empleadoIniciado.idDepartamento << std::endl;
 
         	    int seccion = htonl(empleadoIniciado.codSeccion);
         	    send(comm_socket, (char *)&seccion, sizeof(seccion), 0);
+        	    logComando("ENVIADO", sendBuff);
         	    std::cout << empleadoIniciado.codSeccion << std::endl;
 
         	} else {
         	    const char *mensaje = "NO-ENCONTRADO";
         	    send(comm_socket, mensaje, strlen(mensaje) + 1, 0);
+        	    logComando("ENVIADO", sendBuff);
         	}
 
         } else if (strcmp(recvBuff, "LOGIN-CLIENTE") == 0) {
@@ -208,36 +220,44 @@ void run_server(sqlite3 *db) {
         	   if(!idProd == 0) {
         		   sprintf(sendBuff, "Producto: %d, Nombre: %s, Precio: %.2f, Proveedor: %d, Seccion: %d, stock: %d\n", idProd, nombreProd, precio, codProveedor, codSeccion, stock);
         		   send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        		   logComando("ENVIADO", sendBuff);
         	    }
 
         	}
         	strcpy(sendBuff, "MOSTRAR-END");// la señal de que ya has terminado de enviar datos
         	send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	logComando("ENVIADO", sendBuff);
         	sqlite3_finalize(stmt);
         	//------------------------------------
 
             printf("Productos mostrados \n");
             fflush(stdout);
         } else if (strcmp(recvBuff, "IP") == 0) {
+
             memset(recvBuff, 0, sizeof(recvBuff));
             recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+            logComando("RECIBIDO", recvBuff);
             // "IP-END" confirmation
 
             strcpy(sendBuff, inet_ntoa(server.sin_addr));
             send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+            logComando("ENVIADO", sendBuff);
             printf("Response sent: %s \n", sendBuff);
             fflush(stdout);
         } else if (strcmp(recvBuff, "Anadir stock") == 0) {
+
         	memset(recvBuff, 0, sizeof(recvBuff));
 
         	// Recibir ID del producto
         	recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	logComando("RECIBIDO", recvBuff);
         	int idProducto = atoi(recvBuff);
         	printf("ID producto recibido: %d\n", idProducto);
 
         	// Recibir cantidad a añadir
         	memset(recvBuff, 0, sizeof(recvBuff));
         	recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	logComando("RECIBIDO", recvBuff);
         	int cantidad = atoi(recvBuff);
         	printf("Cantidad a añadir: %d\n", cantidad);
 
@@ -261,6 +281,7 @@ void run_server(sqlite3 *db) {
         	if (stockActual == -1) {
         		sprintf(sendBuff, "❌ Producto con ID %d no encontrado.\n", idProducto);
         		send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        		logComando("ENVIADO", sendBuff);
         		return;
         	}
 
@@ -288,6 +309,7 @@ void run_server(sqlite3 *db) {
         	// Confirmar al cliente
         	sprintf(sendBuff, "Stock del producto %d actualizado a %d unidades.\n", idProducto, nuevoStock);
         	send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	logComando("ENVIADO", sendBuff);
 
         	printf("Stock actualizado correctamente.\n");
         	fflush(stdout);
@@ -295,6 +317,7 @@ void run_server(sqlite3 *db) {
         }
 
         else if(strcmp(recvBuff, "REALIZAR COMPRA") == 0) {
+
         		time_t t = time(NULL);
         		struct tm tm = *localtime(&t);
 
@@ -305,8 +328,10 @@ void run_server(sqlite3 *db) {
 
         	    // PEDIR DNI
         	    send(comm_socket, "Introduce tu DNI:", strlen("Introduce tu DNI:"), 0);
+        	    logComando("ENVIADO", sendBuff);
         	    memset(recvBuff, 0, sizeof(recvBuff));
         	    recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	    logComando("RECIBIDO", recvBuff);
         	    strncpy(dniCliente, recvBuff, sizeof(dniCliente));
         	    dniCliente[sizeof(dniCliente)-1] = '\0';
 
@@ -321,6 +346,7 @@ void run_server(sqlite3 *db) {
 
         	    if (!existeCliente) {
         	        send(comm_socket, "Cliente no encontrado. Compra cancelada.\n", 512, 0);
+        	        logComando("ENVIADO", sendBuff);
         	        return;
         	    }
 
@@ -342,13 +368,17 @@ void run_server(sqlite3 *db) {
         	    // BUCLE DE PRODUCTOS
         	    while (1) {
         	        send(comm_socket, "ID producto:", 512, 0);
+        	        logComando("ENVIADO", sendBuff);
         	        memset(recvBuff, 0, sizeof(recvBuff));
         	        recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	        logComando("RECIBIDO", recvBuff);
         	        int idProd = atoi(recvBuff);
 
         	        send(comm_socket, "Cantidad:", 512, 0);
+        	        logComando("ENVIADO", sendBuff);
         	        memset(recvBuff, 0, sizeof(recvBuff));
         	        recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	        logComando("RECIBIDO", recvBuff);
         	        int cantidad = atoi(recvBuff);
 
         	        // CONSULTAR STOCK
@@ -383,12 +413,15 @@ void run_server(sqlite3 *db) {
         	            sqlite3_finalize(stmt);
 
         	            send(comm_socket, "Producto anadido a la compra.\n", 512, 0);
+        	            logComando("ENVIADO", sendBuff);
         	        }
 
         	        // ¿QUIERE AÑADIR OTRO?
         	        send(comm_socket, "¿Desea anadir otro producto? (s/n):", 512, 0);
+        	        logComando("ENVIADO", sendBuff);
         	        memset(recvBuff, 0, sizeof(recvBuff));
         	        recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	        logComando("RECIBIDO", recvBuff);
 
         	        if (recvBuff[0] == 'n' || recvBuff[0] == 'N') {
         	            break;
@@ -396,9 +429,11 @@ void run_server(sqlite3 *db) {
         	    }
 
         	    send(comm_socket, "Compra finalizada.\n", 512, 0);
+        	    logComando("ENVIADO", sendBuff);
                 }
 
         else if (strcmp(recvBuff, "BUSCADOR") == 0) {
+
             // Enviar menú
             strcpy(sendBuff,
                 "Opciones de búsqueda:\n"
@@ -409,10 +444,12 @@ void run_server(sqlite3 *db) {
                 "5. Buscar por stock (mayor o menor que X)\n"
                 "Selecciona opcion (1, 4, 5): ");
             send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+            logComando("ENVIADO", sendBuff);
 
             // Recibir opción
             memset(recvBuff, 0, sizeof(recvBuff));
             recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+            logComando("RECIBIDO", recvBuff);
             int opcion = atoi(recvBuff);
 
             sqlite3_stmt *stmt;
@@ -420,7 +457,9 @@ void run_server(sqlite3 *db) {
             if (opcion == 1) {
                 // Buscar por nombre parcial
                 send(comm_socket, "Introduce parte del nombre: ", 512, 0);
+                logComando("ENVIADO", sendBuff);
                 recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                logComando("RECIBIDO", recvBuff);
                 char likeQuery[128];
                 snprintf(likeQuery, sizeof(likeQuery), "%%%s%%", recvBuff);
 
@@ -432,7 +471,9 @@ void run_server(sqlite3 *db) {
             else if (opcion == 2) {
                 // Buscar por seccion
                 send(comm_socket, "Introduce código de sección: ", 512, 0);
+                logComando("ENVIADO", sendBuff);
                 recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                logComando("RECIBIDO", recvBuff);
                 int codSeccion = atoi(recvBuff);
 
                 const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE cod_Seccion = ?;";
@@ -443,7 +484,9 @@ void run_server(sqlite3 *db) {
             else if (opcion == 3) {
                 // Buscar por ID de producto
                 send(comm_socket, "Introduce ID del producto: ", 512, 0);
+                logComando("ENVIADO", sendBuff);
                 recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                logComando("RECIBIDO", recvBuff);
                 int idProd = atoi(recvBuff);
 
                 const char *sql = "SELECT id_Producto, nombre, precio, stock FROM producto WHERE id_Producto = ?;";
@@ -454,14 +497,18 @@ void run_server(sqlite3 *db) {
             else if (opcion == 4) {
                 // Buscar por precio
                 send(comm_socket, "Buscar precio (mayor o menor): (mayor/menor): ", 512, 0);
+                logComando("ENVIADO", sendBuff);
                 recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                logComando("RECIBIDO", recvBuff);
                 int mayor = 0;
                 if (strcmp(recvBuff, "mayor") == 0) {
                     mayor = 1;
                 }
 
                 send(comm_socket, "Introduce valor de precio: ", 512, 0);
+                logComando("ENVIADO", sendBuff);
                 recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                logComando("RECIBIDO", recvBuff);
                 float precio = atof(recvBuff);
 
                 if (mayor == 1) {
@@ -478,14 +525,18 @@ void run_server(sqlite3 *db) {
             else if (opcion == 5) {
                 // Buscar por stock
                 send(comm_socket, "Buscar stock (mayor o menor): (mayor/menor): ", 512, 0);
+                logComando("ENVIADO", sendBuff);
                 recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                logComando("RECIBIDO", recvBuff);
                 int mayor = 0;
                 if (strcmp(recvBuff, "mayor") == 0) {
                     mayor = 1;
                 }
 
                 send(comm_socket, "Introduce valor de stock: ", 512, 0);
+                logComando("ENVIADO", sendBuff);
                 recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+                logComando("RECIBIDO", recvBuff);
                 int stock = atoi(recvBuff);
 
                 if (mayor == 1) {
@@ -508,18 +559,23 @@ void run_server(sqlite3 *db) {
 
                 sprintf(sendBuff, "ID: %d | %s | Precio: %.2f | Stock: %d\n", id, nombre, precio, stock);
                 send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+                logComando("ENVIADO", sendBuff);
             }
 
             sqlite3_finalize(stmt);
             strcpy(sendBuff, "BUSCADOR-END");
             send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+            logComando("ENVIADO", sendBuff);
         }
 
         else if (strcmp(recvBuff, "COMPRAS CLIENTE") == 0) {
-        	// Pedir DNI
+
+        		// Pedir DNI
         	    send(comm_socket, "Introduce tu DNI:", 512, 0);
+        	    logComando("ENVIADO", sendBuff);
         	    memset(recvBuff, 0, sizeof(recvBuff));
         	    recv(comm_socket, recvBuff, sizeof(recvBuff), 0);
+        	    logComando("RECIBIDO", recvBuff);
         	    char dni[32];
         	    strncpy(dni, recvBuff, sizeof(dni));
         	    dni[sizeof(dni)-1] = '\0';
@@ -536,6 +592,7 @@ void run_server(sqlite3 *db) {
         	    if (!exists) {
         	        strcpy(sendBuff, "Cliente no encontrado. Volviendo al menu.\nCOMPRAS-END");
         	        send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	        logComando("ENVIADO", sendBuff);
         	        return;
         	    }
 
@@ -550,6 +607,7 @@ void run_server(sqlite3 *db) {
 
         	        sprintf(sendBuff, "🧾 Compra #%d | Fecha: %s\n", idCompra, fecha);
         	        send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	        logComando("ENVIADO", sendBuff);
 
         	        sqlite3_stmt *stmtProd;
         	        const char *prodSQL =
@@ -565,14 +623,17 @@ void run_server(sqlite3 *db) {
         	            int cantidad = sqlite3_column_int(stmtProd, 1);
         	            sprintf(sendBuff, "   - %s (x%d)\n", nombre, cantidad);
         	            send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	            logComando("ENVIADO", sendBuff);
         	        }
         	        sqlite3_finalize(stmtProd);
         	        send(comm_socket, "\n", sizeof(sendBuff), 0);
+        	        logComando("ENVIADO", sendBuff);
         	    }
 
         	    sqlite3_finalize(stmt);
         	    strcpy(sendBuff, "COMPRAS-END");
         	    send(comm_socket, sendBuff, sizeof(sendBuff), 0);
+        	    logComando("ENVIADO", sendBuff);
         }
 
         else if (strcmp(recvBuff, "EXIT") == 0) {

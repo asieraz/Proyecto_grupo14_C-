@@ -1,0 +1,134 @@
+[2025-05-30 19:23:58] [RECIBIDO] LOGIN-EMPLEADO
+[2025-05-30 19:23:58] [ENVIADO] ç)+w‡@
+[2025-05-30 19:24:03] [RECIBIDO] Carmen Ruiz
+[2025-05-30 19:24:03] [ENVIADO] ç)+w‡@
+[2025-05-30 19:24:03] [ENVIADO] ç)+w‡@
+[2025-05-30 19:24:03] [ENVIADO] ç)+w‡@
+[2025-05-30 19:24:03] [ENVIADO] ç)+w‡@
+[2025-05-30 19:24:03] [ENVIADO] ç)+w‡@
+[2025-05-30 19:24:11] [RECIBIDO] MOSTRAR
+[2025-05-30 19:24:11] [ENVIADO] Producto: 1, Nombre: Quitamanchas, Precio: 68.00, Proveedor: 1, Seccion: 7, stock: 15
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 2, Nombre: Jabon, Precio: 11.90, Proveedor: 1, Seccion: 7, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 3, Nombre: Esponjas, Precio: 72.60, Proveedor: 1, Seccion: 7, stock: 6
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 4, Nombre: Limpiador de vidrios, Precio: 88.20, Proveedor: 1, Seccion: 7, stock: 22
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 5, Nombre: Limpiador de pisos, Precio: 72.00, Proveedor: 1, Seccion: 7, stock: 3
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 6, Nombre: Cepillos, Precio: 89.50, Proveedor: 1, Seccion: 7, stock: 13
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 7, Nombre: Desinfectante, Precio: 95.70, Proveedor: 1, Seccion: 7, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 8, Nombre: Suavizante, Precio: 36.60, Proveedor: 1, Seccion: 7, stock: 5
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 9, Nombre: Limpiador multiusos, Precio: 69.50, Proveedor: 1, Seccion: 7, stock: 10
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 10, Nombre: Detergente, Precio: 82.70, Proveedor: 1, Seccion: 7, stock: 1
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 11, Nombre: Pizza congelada, Precio: 60.30, Proveedor: 2, Seccion: 2, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 12, Nombre: Pescado congelado, Precio: 69.30, Proveedor: 2, Seccion: 2, stock: 18
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 13, Nombre: Carne congelada, Precio: 12.60, Proveedor: 2, Seccion: 2, stock: 2
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 14, Nombre: Nuggets de pollo, Precio: 76.20, Proveedor: 2, Seccion: 2, stock: 30
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 15, Nombre: Pollo congelado, Precio: 31.50, Proveedor: 2, Seccion: 2, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 16, Nombre: Verduras congeladas, Precio: 13.80, Proveedor: 2, Seccion: 2, stock: 7
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 17, Nombre: Comida preparada congelada, Precio: 64.00, Proveedor: 2, Seccion: 2, stock: 12
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 18, Nombre: Helado, Precio: 49.10, Proveedor: 2, Seccion: 2, stock: 4
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 19, Nombre: Papas fritas congeladas, Precio: 91.30, Proveedor: 2, Seccion: 2, stock: 25
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 20, Nombre: Frutas congeladas, Precio: 90.90, Proveedor: 2, Seccion: 2, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 21, Nombre: Filete de res, Precio: 13.30, Proveedor: 3, Seccion: 3, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 22, Nombre: Chorizo, Precio: 86.60, Proveedor: 3, Seccion: 3, stock: 40
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 23, Nombre: Jamon, Precio: 49.40, Proveedor: 3, Seccion: 3, stock: 9
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 24, Nombre: Cordero, Precio: 94.90, Proveedor: 3, Seccion: 3, stock: 15
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 25, Nombre: Pollo fresco, Precio: 45.90, Proveedor: 3, Seccion: 3, stock: 2
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 26, Nombre: Carne de res, Precio: 81.60, Proveedor: 3, Seccion: 3, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 27, Nombre: Carne de cerdo, Precio: 41.20, Proveedor: 3, Seccion: 3, stock: 11
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 28, Nombre: Costillas de cerdo, Precio: 97.60, Proveedor: 3, Seccion: 3, stock: 20
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 29, Nombre: Salchichas, Precio: 98.50, Proveedor: 3, Seccion: 3, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 30, Nombre: Bacon, Precio: 2.40, Proveedor: 3, Seccion: 3, stock: 1
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 31, Nombre: Trucha fresca, Precio: 92.50, Proveedor: 4, Seccion: 4, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 32, Nombre: Salmon fresco, Precio: 87.30, Proveedor: 4, Seccion: 4, stock: 5
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 33, Nombre: Pulpo fresco, Precio: 73.50, Proveedor: 4, Seccion: 4, stock: 8
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 34, Nombre: Merluza fresca, Precio: 67.00, Proveedor: 4, Seccion: 4, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 35, Nombre: Calamares frescos, Precio: 27.20, Proveedor: 4, Seccion: 4, stock: 3
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 36, Nombre: Langosta fresca, Precio: 59.80, Proveedor: 4, Seccion: 4, stock: 12
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 37, Nombre: Ostras frescas, Precio: 78.90, Proveedor: 4, Seccion: 4, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 38, Nombre: Camarones frescos, Precio: 87.10, Proveedor: 4, Seccion: 4, stock: 7
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 39, Nombre: Mejillones frescos, Precio: 38.00, Proveedor: 4, Seccion: 4, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 40, Nombre: Atun fresco, Precio: 12.70, Proveedor: 4, Seccion: 4, stock: 4
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 41, Nombre: Cereal de frutas, Precio: 86.60, Proveedor: 5, Seccion: 5, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 42, Nombre: Cereal con miel, Precio: 44.50, Proveedor: 5, Seccion: 5, stock: 6
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 43, Nombre: Cereal sin gluten, Precio: 76.30, Proveedor: 5, Seccion: 5, stock: 10
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 44, Nombre: Cornflakes, Precio: 19.50, Proveedor: 5, Seccion: 5, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 45, Nombre: Cereal de chocolate, Precio: 87.80, Proveedor: 5, Seccion: 5, stock: 18
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 46, Nombre: Cereal integral, Precio: 80.40, Proveedor: 5, Seccion: 5, stock: 2
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 47, Nombre: Muesli, Precio: 88.40, Proveedor: 5, Seccion: 5, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 48, Nombre: Cereal con nueces, Precio: 48.20, Proveedor: 5, Seccion: 5, stock: 9
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 49, Nombre: Avena instant√°nea, Precio: 84.20, Proveedor: 5, Seccion: 5, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 50, Nombre: Granola, Precio: 88.70, Proveedor: 5, Seccion: 5, stock: 14
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 51, Nombre: Lavadora, Precio: 85.30, Proveedor: 6, Seccion: 6, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 52, Nombre: Horno electrico, Precio: 39.70, Proveedor: 6, Seccion: 6, stock: 3
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 53, Nombre: Plancha electrica, Precio: 17.40, Proveedor: 6, Seccion: 6, stock: 1
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 54, Nombre: Refrigerador, Precio: 19.90, Proveedor: 6, Seccion: 6, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 55, Nombre: Batidora electrica, Precio: 44.30, Proveedor: 6, Seccion: 6, stock: 5
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 56, Nombre: Microondas, Precio: 71.90, Proveedor: 6, Seccion: 6, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 57, Nombre: Aspiradora, Precio: 38.90, Proveedor: 6, Seccion: 6, stock: 2
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 58, Nombre: Secadora, Precio: 35.90, Proveedor: 6, Seccion: 6, stock: 0
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 59, Nombre: Licuadora, Precio: 55.20, Proveedor: 6, Seccion: 6, stock: 4
+
+[2025-05-30 19:24:11] [ENVIADO] Producto: 60, Nombre: Cafetera, Precio: 37.30, Proveedor: 6, Seccion: 6, stock: 1
+
+[2025-05-30 19:24:11] [ENVIADO] MOSTRAR-END
+[2025-05-30 19:24:23] [RECIBIDO] REALIZAR COMPRA
+[2025-05-30 19:24:23] [ENVIADO] MOSTRAR-END
+[2025-05-30 19:24:38] [RECIBIDO] 1111
+[2025-05-30 19:24:38] [ENVIADO] MOSTRAR-END
